@@ -9,6 +9,7 @@ import java.util.List;
 
 import db.DB;
 import db.DBException;
+import entities.Department;
 import entities.Product;
 import model.dao.Dao;
 
@@ -74,8 +75,50 @@ public class ProductDaoJDBC implements Dao<Product, Integer> {
 
 	@Override
 	public Product findById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"SELECT product.*,department.Name as DepName "
+					+ "FROM product INNER JOIN department "
+					+ "ON product.DepartmentId = department.Id "
+					+ "WHERE product.Id = ?");
+			
+			st.setInt(1, id);
+			rs = st.executeQuery();
+			
+			if (rs.next()) {
+				Department dep = instantiateDepartment(rs);
+				Product obj = instantiateProduct(rs, dep);
+				return obj;
+			}
+			return null;
+		}
+		catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
+	
+	private Product instantiateProduct(ResultSet rs, Department dep) throws SQLException {
+		Product obj = new Product();
+		obj.setId(rs.getInt("Id"));
+		obj.setName(rs.getString("Name"));
+		obj.setPrice(rs.getDouble("Price"));
+		obj.setQuantity(rs.getInt("Quantity"));
+		obj.setDepartment(dep);
+		return obj;
+	}
+	
+	private Department instantiateDepartment(ResultSet rs) throws SQLException {
+		Department dep = new Department();
+		dep.setId(rs.getInt("DepartmentId"));
+		dep.setName(rs.getString("DepName"));
+		return dep;
 	}
 
 	@Override
