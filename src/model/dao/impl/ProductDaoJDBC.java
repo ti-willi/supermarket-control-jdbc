@@ -63,7 +63,28 @@ public class ProductDaoJDBC implements Dao<Product, Integer> {
 
 	@Override
 	public void update(Product obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"UPDATE product "
+					+ "SET Name = ?, Price = ?, Quantity = ?, DepartmentId = ? "
+					+ "WHERE Id = ?");
+			
+			st.setString(1, obj.getName());
+			st.setDouble(2, obj.getPrice());
+			st.setInt(3, obj.getQuantity());
+			st.setInt(4, obj.getDepartment().getId());
+			st.setInt(5, obj.getId());
+			
+			st.executeUpdate();
+		}
+		catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 		
 	}
 

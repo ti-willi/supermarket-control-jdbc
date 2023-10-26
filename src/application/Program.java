@@ -26,9 +26,21 @@ public class Program {
 		Department department = departmentDao.findById(4);
 		System.out.println(department);
 		
-		System.out.println("\n---TEST 4 = department findById---");
+		System.out.println("\n---TEST 4 = product findById---");
 		Product product = productDao.findById(2);
 		System.out.println(product);
+		
+		System.out.println("\n---TEST 5 = department update---");
+		department = departmentDao.findById(4);
+		department.setName("Frozen");
+		departmentDao.update(department);
+		System.out.println("Update completed");
+		
+		System.out.println("\n---TEST 6 = product update---");
+		product = productDao.findById(4);
+		product.setQuantity(3);
+		productDao.update(product);
+		System.out.println("Update completed");
 		
 	}
 
