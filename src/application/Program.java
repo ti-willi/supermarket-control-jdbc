@@ -42,6 +42,14 @@ public class Program {
 		productDao.update(product);
 		System.out.println("Update completed");
 		
+		/*System.out.println("\n---TEST 7 = department delete---");
+		departmentDao.deleteById(2);
+		System.out.println("Delete completed");
+		
+		System.out.println("\n---TEST 8 = product delete---");
+		productDao.deleteById(2);
+		System.out.println("Delete completed");*/
+		
 	}
 
 }
