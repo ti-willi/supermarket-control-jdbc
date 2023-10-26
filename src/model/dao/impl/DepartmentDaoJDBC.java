@@ -11,9 +11,9 @@ import java.util.List;
 import db.DB;
 import db.DBException;
 import entities.Department;
-import model.dao.Dao;
+import model.dao.DepartmentDao;
 
-public class DepartmentDaoJDBC implements Dao<Department, Integer> {
+public class DepartmentDaoJDBC implements DepartmentDao {
 	
 	private Connection conn;
 	

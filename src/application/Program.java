@@ -4,15 +4,16 @@ import java.util.List;
 
 import entities.Department;
 import entities.Product;
-import model.dao.Dao;
 import model.dao.DaoFactory;
+import model.dao.DepartmentDao;
+import model.dao.ProductDao;
 
 public class Program {
 
 	public static void main(String[] args) {
 		
-		Dao<Product, Integer> productDao = DaoFactory.createProductDao();
-		Dao<Department, Integer> departmentDao = DaoFactory.createDepartmentDao();
+		ProductDao productDao = DaoFactory.createProductDao();
+		DepartmentDao departmentDao = DaoFactory.createDepartmentDao();
 		
 		System.out.println("---TEST 1 = department insert---");
 		Department newDepartment = new Department(null, "Bakery");
@@ -33,7 +34,7 @@ public class Program {
 		System.out.println(product);
 		
 		System.out.println("\n---TEST 5 = department update---");
-		department = departmentDao.findById(4);
+		department = departmentDao.findById(3);
 		department.setName("Frozen");
 		departmentDao.update(department);
 		System.out.println("Update completed");
@@ -60,6 +61,12 @@ public class Program {
 		
 		System.out.println("\n---TEST 10 = product findAll---");
 		List<Product> listProd = productDao.findAll();
+		for (Product obj : listProd) {
+			System.out.println(obj);
+		}
+		
+		System.out.println("\n---TEST 10 = product findByDepartment---");
+		listProd = productDao.findByDepartment(department);
 		for (Product obj : listProd) {
 			System.out.println(obj);
 		}
