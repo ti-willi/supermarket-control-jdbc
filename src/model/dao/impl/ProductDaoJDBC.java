@@ -5,7 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.DB;
 import db.DBException;
@@ -158,8 +161,41 @@ public class ProductDaoJDBC implements Dao<Product, Integer> {
 
 	@Override
 	public List<Product> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"SELECT product.*,department.Name as DepName "
+					+ "FROM product INNER JOIN department "
+					+ "ON product.DepartmentId = department.Id "
+					+ "ORDER BY Name");
+			rs = st.executeQuery();
+			
+			List<Product> list = new ArrayList<>();
+			Map<Integer, Department> map = new HashMap<>();
+			
+			while (rs.next()) {
+				Department dep = map.get(rs.getInt("DepartmentId"));
+				
+				if (dep == null) {
+					dep = instantiateDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep);
+				}
+				
+				Product obj = instantiateProduct(rs, dep);
+				list.add(obj);
+			}
+			return list;		
+		}
+		catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+		
 	}
 
 }

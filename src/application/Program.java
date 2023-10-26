@@ -1,5 +1,7 @@
 package application;
 
+import java.util.List;
+
 import entities.Department;
 import entities.Product;
 import model.dao.Dao;
@@ -49,6 +51,18 @@ public class Program {
 		System.out.println("\n---TEST 8 = product delete---");
 		productDao.deleteById(2);
 		System.out.println("Delete completed");*/
+		
+		System.out.println("\n---TEST 9 = department findAll---");
+		List<Department> listDep = departmentDao.findAll();
+		for (Department obj : listDep) {
+			System.out.println(obj);
+		}
+		
+		System.out.println("\n---TEST 10 = product findAll---");
+		List<Product> listProd = productDao.findAll();
+		for (Product obj : listProd) {
+			System.out.println(obj);
+		}
 		
 	}
 
