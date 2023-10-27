@@ -14,9 +14,11 @@ import model.dao.ProductDao;
 public class UI {
 	
 	public static void printMenu(Scanner sc) {
+		
+		Locale.setDefault(Locale.US);
+		
 		ProductDao productDao = DaoFactory.createProductDao();
 		DepartmentDao departmentDao = DaoFactory.createDepartmentDao();
-		Locale.setDefault(Locale.US);
 		
 		System.out.println("1 - Register item");
 		System.out.println("2 - Edit item");
@@ -26,11 +28,28 @@ public class UI {
 		System.out.println("6 - Exit");
 		int n = sc.nextInt();
 		
-		//printRegisterItem(productDao, departmentDao, sc);
-		//printEditItem(productDao, departmentDao, sc);
-		//printFindItem(productDao, departmentDao, sc);
-		//printDeleteItem(productDao, departmentDao, sc);
-		showAllItems(productDao, departmentDao);
+		switch (n) {
+		case 1:
+			printRegisterItem(productDao, departmentDao, sc);
+			break;
+		case 2: 
+			printEditItem(productDao, departmentDao, sc);
+			break;
+		case 3:
+			printFindItem(productDao, departmentDao, sc);
+			break;
+		case 4:
+			printDeleteItem(productDao, departmentDao, sc);
+			break;
+		case 5:
+			showAllItems(productDao, departmentDao, sc);
+			break;
+		case 6:
+			break;
+		default:
+			throw new DBException("Invalid data");
+		}
+		
 	}
 	
 	private static void printRegisterItem(ProductDao productDao, DepartmentDao departmentDao, Scanner sc) {
@@ -85,6 +104,7 @@ public class UI {
 	private static void printEditItem(ProductDao productDao, DepartmentDao departmentDao, Scanner sc) {
 		System.out.println("1 - Edit product");
 		System.out.println("2 - Edit department");
+		System.out.println("3 - Return to menu");
 		int n = sc.nextInt();
 		
 		if (n == 1) {
@@ -92,6 +112,9 @@ public class UI {
 		}
 		else if (n == 2) {
 			editDepartment(departmentDao, sc);
+		}
+		else if (n == 3) {
+			printMenu(sc);
 		}
 		else {
 			throw new DBException("Invalid data");
@@ -163,6 +186,7 @@ public class UI {
 	private static void printFindItem(ProductDao productDao, DepartmentDao departmentDao, Scanner sc) {
 		System.out.println("1 - Find product");
 		System.out.println("2 - Find department");
+		System.out.println("3 - Return to menu");
 		int n = sc.nextInt();
 		
 		if (n == 1) {
@@ -182,6 +206,9 @@ public class UI {
 		}
 		else if (n == 2) {
 			findDepartment(departmentDao, sc);
+		}
+		else if (n == 3) {
+			printMenu(sc);
 		}
 		else {
 			throw new DBException("Invalid data");
@@ -215,6 +242,7 @@ public class UI {
 	private static void printDeleteItem(ProductDao productDao, DepartmentDao departmentDao, Scanner sc) {
 		System.out.println("1 - Delete product");
 		System.out.println("2 - Delete department");
+		System.out.println("3 - Return to menu");
 		int n = sc.nextInt();
 		
 		if (n == 1) {
@@ -222,6 +250,9 @@ public class UI {
 		}
 		else if (n == 2) {
 			deleteDepartment(departmentDao, sc);
+		}
+		else if (n == 3) {
+			printMenu(sc);
 		}
 		else {
 			throw new DBException("Invalid data");
@@ -246,12 +277,22 @@ public class UI {
 		System.out.println("Delete completed");
 	}
 	
-	private static void showAllItems(ProductDao productDao, DepartmentDao departmentDao) {
+	private static void showAllItems(ProductDao productDao, DepartmentDao departmentDao, Scanner sc) {
 		System.out.println("Products:\n");
 		showAllProducts(productDao);
 		
 		System.out.println("\nDepartments:\n");
 		showAllDepartments(departmentDao);
+		
+		System.out.println("\n1 - Return to menu");
+		int n = sc.nextInt();
+		
+		if (n == 1) {
+			printMenu(sc);
+		}
+		else {
+			throw new DBException("Invalid data");
+		}
 	}
 	
 	private static void showAllProducts(ProductDao productDao) {
