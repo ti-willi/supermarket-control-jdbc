@@ -1,5 +1,6 @@
 package application;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -26,8 +27,8 @@ public class UI {
 		int n = sc.nextInt();
 		
 		//printRegisterItem(productDao, departmentDao, sc);
-		printEditItem(productDao, departmentDao, sc);
-		//printFind();
+		//printEditItem(productDao, departmentDao, sc);
+		printFindItem(productDao, departmentDao, sc);
 		//printDelete();
 	}
 	
@@ -158,7 +159,7 @@ public class UI {
 		System.out.println(department);
 	}
 	
-	private static void printFind(Scanner sc) {
+	private static void printFindItem(ProductDao productDao, DepartmentDao departmentDao, Scanner sc) {
 		System.out.println("1 - Find product");
 		System.out.println("2 - Find department");
 		int n = sc.nextInt();
@@ -166,8 +167,48 @@ public class UI {
 		if (n == 1) {
 			System.out.println("1 - Find product by Id");
 			System.out.println("2 - Find product by department");
-		}	
+			n = sc.nextInt();
+			
+			if (n == 1) {
+				findProductById(productDao, sc);
+			}
+			else if (n == 2) {
+				findProductByDepartment(productDao, sc);
+			}
+			else {
+				throw new DBException("Invalid data");
+			}
+		}
+		else if (n == 2) {
+			findDepartment(departmentDao, sc);
+		}
+		else {
+			throw new DBException("Invalid data");
+		}
 		
+	}
+	
+	private static void findProductById(ProductDao productDao, Scanner sc) {
+		System.out.print("Enter the Product Id: ");
+		int id = sc.nextInt();
+		Product product = productDao.findById(id);
+		System.out.println(product);
+	}
+	
+	private static void findProductByDepartment(ProductDao productDao, Scanner sc) {
+		System.out.print("Enter the Department Id: ");
+		int id = sc.nextInt();
+		Department department  = new Department(id, null);
+		List<Product> list = productDao.findByDepartment(department);
+		for (Product obj : list) {
+			System.out.println(obj);
+		}
+	}
+	private static void findDepartment(DepartmentDao departmentDao, Scanner sc) {
+		System.out.print("Enter the department Id: ");
+		int id = sc.nextInt();
+		Department department = departmentDao.findById(id);
+		System.out.println(department);		
 	}
 	
 	private static void printDelete(Scanner sc) {
