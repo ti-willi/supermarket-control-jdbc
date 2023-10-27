@@ -29,7 +29,8 @@ public class UI {
 		//printRegisterItem(productDao, departmentDao, sc);
 		//printEditItem(productDao, departmentDao, sc);
 		//printFindItem(productDao, departmentDao, sc);
-		printDeleteItem(productDao, departmentDao, sc);
+		//printDeleteItem(productDao, departmentDao, sc);
+		showAllItems(productDao, departmentDao);
 	}
 	
 	private static void printRegisterItem(ProductDao productDao, DepartmentDao departmentDao, Scanner sc) {
@@ -228,10 +229,7 @@ public class UI {
 	}
 	
 	private static void deleteProduct(ProductDao productDao, Scanner sc) {
-		List<Product> list = productDao.findAll();
-		for (Product p : list) {
-			System.out.println(p);
-		}
+		showAllProducts(productDao);
 		
 		System.out.print("\nEnter the Product Id: ");
 		int id = sc.nextInt();
@@ -240,14 +238,34 @@ public class UI {
 	}
 	
 	private static void deleteDepartment(DepartmentDao departmentDao, Scanner sc) {
-		List<Department> list = departmentDao.findAll();
-		for (Department dep : list) {
-			System.out.println(dep);
-		}
+		showAllDepartments(departmentDao);
+		
 		System.out.print("\nEnter the Department Id: ");
 		int id = sc.nextInt();
 		departmentDao.deleteById(id);
 		System.out.println("Delete completed");
+	}
+	
+	private static void showAllItems(ProductDao productDao, DepartmentDao departmentDao) {
+		System.out.println("Products:\n");
+		showAllProducts(productDao);
+		
+		System.out.println("\nDepartments:\n");
+		showAllDepartments(departmentDao);
+	}
+	
+	private static void showAllProducts(ProductDao productDao) {
+		List<Product> products = productDao.findAll();
+		for (Product p : products) {
+			System.out.println(p);
+		}
+	}
+	
+	private static void showAllDepartments(DepartmentDao departmentDao) {
+		List<Department> departments = departmentDao.findAll();
+		for (Department dep : departments) {
+			System.out.println(dep);
+		}
 	}
 	
 }
