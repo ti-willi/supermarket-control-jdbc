@@ -28,8 +28,8 @@ public class UI {
 		
 		//printRegisterItem(productDao, departmentDao, sc);
 		//printEditItem(productDao, departmentDao, sc);
-		printFindItem(productDao, departmentDao, sc);
-		//printDelete();
+		//printFindItem(productDao, departmentDao, sc);
+		printDeleteItem(productDao, departmentDao, sc);
 	}
 	
 	private static void printRegisterItem(ProductDao productDao, DepartmentDao departmentDao, Scanner sc) {
@@ -211,10 +211,43 @@ public class UI {
 		System.out.println(department);		
 	}
 	
-	private static void printDelete(Scanner sc) {
+	private static void printDeleteItem(ProductDao productDao, DepartmentDao departmentDao, Scanner sc) {
 		System.out.println("1 - Delete product");
 		System.out.println("2 - Delete department");
 		int n = sc.nextInt();
+		
+		if (n == 1) {
+			deleteProduct(productDao, sc);
+		}
+		else if (n == 2) {
+			deleteDepartment(departmentDao, sc);
+		}
+		else {
+			throw new DBException("Invalid data");
+		}
+	}
+	
+	private static void deleteProduct(ProductDao productDao, Scanner sc) {
+		List<Product> list = productDao.findAll();
+		for (Product p : list) {
+			System.out.println(p);
+		}
+		
+		System.out.print("\nEnter the Product Id: ");
+		int id = sc.nextInt();
+		productDao.deleteById(id);
+		System.out.println("Delete completed");
+	}
+	
+	private static void deleteDepartment(DepartmentDao departmentDao, Scanner sc) {
+		List<Department> list = departmentDao.findAll();
+		for (Department dep : list) {
+			System.out.println(dep);
+		}
+		System.out.print("\nEnter the Department Id: ");
+		int id = sc.nextInt();
+		departmentDao.deleteById(id);
+		System.out.println("Delete completed");
 	}
 	
 }

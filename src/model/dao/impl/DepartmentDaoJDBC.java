@@ -90,7 +90,11 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			
 			st.setInt(1, id);
 			
-			st.executeUpdate();
+			int rows = st.executeUpdate();
+			
+			if (rows == 0) {
+				throw new DBException("This id does not exist");
+			}
 		}
 		catch (SQLException e) {
 			throw new DBException(e.getMessage());
