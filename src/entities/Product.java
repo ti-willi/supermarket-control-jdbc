@@ -3,6 +3,8 @@ package entities;
 import java.io.Serializable;
 import java.util.Objects;
 
+import application.UI;
+
 public class Product implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -84,8 +86,11 @@ public class Product implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", name=" + name + ", price=" + price + ", quantity=" + quantity + ", department="
-				+ department + "]";
+		return "" + UI.ANSI_CYAN + "Product -->" + UI.ANSI_RESET + " Id: " + id
+				+ ", Name: " + name
+				+ ", Price: " + String.format("%.2f", price)
+				+ ", Quantity: " + quantity
+				+ "   " + department;
 	}
 	
 }

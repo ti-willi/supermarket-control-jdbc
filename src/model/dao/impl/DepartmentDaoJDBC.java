@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import db.DB;
 import db.DBException;
@@ -35,18 +36,29 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			
 			st.setString(1, obj.getName());
 			
-			int rowsAffected = st.executeUpdate();
+			// Checks if there is a department with the same name
+			List<Department> registredDepartment = findAll().stream()
+					.filter(x -> x.getName().toUpperCase().equals(obj.getName().toUpperCase()))
+					.collect(Collectors.toList());
 			
-			if (rowsAffected > 0) {
-				ResultSet rs = st.getGeneratedKeys();
-				if (rs.next()) {
-					int id = rs.getInt(1);
-					obj.setId(id);
+			if (registredDepartment.size() == 0) {
+				
+				int rowsAffected = st.executeUpdate();
+				
+				if (rowsAffected > 0) {
+					ResultSet rs = st.getGeneratedKeys();
+					if (rs.next()) {
+						int id = rs.getInt(1);
+						obj.setId(id);
+					}
+					DB.closeResultSet(rs);
 				}
-				DB.closeResultSet(rs);
+				else {
+					throw new DBException("Unexpected error! No rows affected!");
+				}
 			}
 			else {
-				throw new DBException("Unexpected error! No rows affected!");
+				throw new DBException("This department is already registred\n" + registredDepartment.get(0));
 			}
 		}
 		catch (SQLException e) {
@@ -70,7 +82,11 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			st.setString(1, obj.getName());
 			st.setInt(2, obj.getId());
 			
-			st.executeUpdate();
+			int rows = st.executeUpdate();
+			
+			if (rows == 0) {
+				throw new DBException("\nId not found\n");
+			}
 		}
 		catch (SQLException e) {
 			throw new DBException(e.getMessage());
@@ -93,7 +109,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			int rows = st.executeUpdate();
 			
 			if (rows == 0) {
-				throw new DBException("This id does not exist");
+				throw new DBException("\nId not found\n");
 			}
 		}
 		catch (SQLException e) {
@@ -111,8 +127,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 		ResultSet rs = null;
 		
 		try {
-			st = conn.prepareStatement(
-					"SELECT * FROM department WHERE Id = ?");
+			st = conn.prepareStatement("SELECT * FROM department WHERE Id = ?");
 			
 			st.setInt(1, id);
 			rs = st.executeQuery();
@@ -123,7 +138,9 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 				dep.setName(rs.getString("Name"));
 				return dep;
 			}
-			return null;
+			else {
+				throw new DBException("\nId not found\n");
+			}
 		}
 		catch (SQLException e) {
 			throw new DBException(e.getMessage());

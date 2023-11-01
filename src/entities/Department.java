@@ -3,6 +3,8 @@ package entities;
 import java.io.Serializable;
 import java.util.Objects;
 
+import application.UI;
+
 public class Department implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -36,12 +38,13 @@ public class Department implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Department [id=" + id + ", name=" + name + "]";
+		return "" + UI.ANSI_YELLOW + "Department -->" + UI.ANSI_RESET + " Id: " + id
+				+ ", Name: " + name;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(name);
 	}
 
 	@Override
@@ -53,7 +56,7 @@ public class Department implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Department other = (Department) obj;
-		return Objects.equals(id, other.id);
+		return Objects.equals(name, other.name);
 	}
-	
+
 }

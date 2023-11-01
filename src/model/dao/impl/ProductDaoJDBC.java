@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import db.DB;
 import db.DBException;
@@ -41,18 +42,29 @@ public class ProductDaoJDBC implements ProductDao {
 			st.setInt(3, obj.getQuantity());
 			st.setInt(4, obj.getDepartment().getId());
 			
-			int rowsAffected = st.executeUpdate();
+			// Checks if there is a product with the same name
+			List<Product> registredProduct = findAll().stream()
+					.filter(x -> x.getName().toUpperCase().equals(obj.getName().toUpperCase()))
+					.collect(Collectors.toList());
 			
-			if (rowsAffected > 0)  {
-				ResultSet rs = st.getGeneratedKeys();
-				if (rs.next()) {
-					int id = rs.getInt(1);
-					obj.setId(id);
+			if (registredProduct.size() == 0) {
+			
+				int rowsAffected = st.executeUpdate();
+				
+				if (rowsAffected > 0)  {
+					ResultSet rs = st.getGeneratedKeys();
+					if (rs.next()) {
+						int id = rs.getInt(1);
+						obj.setId(id);
+					}
+					DB.closeResultSet(rs);
 				}
-				DB.closeResultSet(rs);
+				else {
+					throw new DBException("Unexpeted error! No rows affected!");
+				}
 			}
 			else {
-				throw new DBException("Unexpeted error! No rows affected!");
+				throw new DBException("This product is already registred\n" + registredProduct.get(0));
 			}
 		}
 		catch (SQLException e) {
@@ -80,7 +92,11 @@ public class ProductDaoJDBC implements ProductDao {
 			st.setInt(4, obj.getDepartment().getId());
 			st.setInt(5, obj.getId());
 			
-			st.executeUpdate();
+			int rows = st.executeUpdate();
+			
+			if (rows == 0) {
+				throw new DBException("\nId not found\n");
+			}
 		}
 		catch (SQLException e) {
 			throw new DBException(e.getMessage());
@@ -103,7 +119,7 @@ public class ProductDaoJDBC implements ProductDao {
 			int rows = st.executeUpdate();
 			
 			if (rows == 0) {
-				throw new DBException("This id does not exist");
+				throw new DBException("\nId not found\n");
 			}
 		}
 		catch (SQLException e) {
@@ -135,7 +151,10 @@ public class ProductDaoJDBC implements ProductDao {
 				Product obj = instantiateProduct(rs, dep);
 				return obj;
 			}
-			return null;
+			else {
+				throw new DBException("\nId not found\n");
+			}
+		
 		}
 		catch (SQLException e) {
 			throw new DBException(e.getMessage());
@@ -173,7 +192,7 @@ public class ProductDaoJDBC implements ProductDao {
 					"SELECT product.*,department.Name as DepName "
 					+ "FROM product INNER JOIN department "
 					+ "ON product.DepartmentId = department.Id "
-					+ "ORDER BY Name");
+					+ "ORDER BY DepartmentId");
 			
 			rs = st.executeQuery();
 			
@@ -232,7 +251,14 @@ public class ProductDaoJDBC implements ProductDao {
 				Product obj = instantiateProduct(rs, dep);
 				list.add(obj);
 			}
-			return list;		
+			
+			if (list.size() == 0) {
+				throw new DBException("\nId not found\n");
+			}
+			else {
+				return list;
+			}
+			
 		}
 		catch(SQLException e) {
 			throw new DBException(e.getMessage());
@@ -242,5 +268,5 @@ public class ProductDaoJDBC implements ProductDao {
 			DB.closeResultSet(rs);
 		}
 	}
-
+	
 }
